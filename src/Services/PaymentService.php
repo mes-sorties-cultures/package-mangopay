@@ -4,7 +4,6 @@ namespace D4rk0s\Mangopay\Services;
 
 use D4rk0s\Mangopay\Events\PaymentFailed;
 use D4rk0s\Mangopay\Events\PaymentSuccessfull;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use MangoPay\BrowserInfo;
 use MangoPay\Card;
@@ -13,24 +12,22 @@ use MangoPay\PayIn;
 use MangoPay\PayInExecutionDetailsDirect;
 use MangoPay\PayInPaymentDetailsCard;
 use MangoPay\PayInStatus;
-use MangoPay\User;
-use MangoPay\Wallet;
 
 class PaymentService extends MangopaySDK
 {
     public const TRANSACTION_ID_IN_SESSION = 'transactionId';
 
     public static function make(
-      User $payer,
-      Wallet $payerWallet,
+      string $mangopayUserId,
+      string $walletId,
       Card $payerCard,
       Money $debitedFunds,
       ?Money $fees = null,
     )
     {
         $payIn = new PayIn();
-        $payIn->AuthorId = $payer->Id;
-        $payIn->CreditedWalletId = $payerWallet->Id;
+        $payIn->AuthorId = $mangopayUserId;
+        $payIn->CreditedWalletId = $walletId;
         $payIn->DebitedFunds = $debitedFunds;
         $payIn->Fees = $fees;
         $payIn->PaymentDetails = new PayInPaymentDetailsCard();
@@ -55,7 +52,7 @@ class PaymentService extends MangopaySDK
             return PaymentFailed::dispatch(
               $payIn->DebitedFunds->Amount,
               $payIn->Id,
-              $payer->Id,
+              $mangopayUserId,
               $payIn->ResultCode
             );
         }
@@ -68,7 +65,7 @@ class PaymentService extends MangopaySDK
         return PaymentSuccessfull::dispatch(
           $payIn->DebitedFunds->Amount,
           $payIn->Id,
-          $payer->Id
+          $mangopayUserId
         );
     }
 

@@ -7,13 +7,15 @@ use MangoPay\CardRegistration;
 class CardService extends MangopaySDK
 {
     public static function createCardRegistration(
-      int $mangopayUserId
-    ) : CardRegistration
+      int $mangopayUserId,
+      string $currency = "EUR",
+      string $cardType = "CB_VISA_MASTERCARD"
+    ) : ?CardRegistration
     {
         $cardRegistration = new CardRegistration();
         $cardRegistration->UserId = $mangopayUserId;
-        $cardRegistration->Currency = "EUR";
-        $cardRegistration->CardType = "CB_VISA_MASTERCARD";
+        $cardRegistration->Currency = $currency;
+        $cardRegistration->CardType = $cardType;
 
         return self::getSDK()->CardRegistrations->Create(cardRegistration: $cardRegistration);
     }

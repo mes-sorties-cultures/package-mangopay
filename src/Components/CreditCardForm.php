@@ -2,19 +2,34 @@
 
 namespace D4rk0s\Mangopay\Components;
 
-use Illuminate\Http\Request;
+use D4rk0s\Mangopay\Exceptions\MangopayError;
+use D4rk0s\Mangopay\Services\CardService;
 use Illuminate\View\Component;
 use MangoPay\CardRegistration;
 
 class CreditCardForm extends Component
 {
-    private CardRegistration $cardRegistration;
     public const SESSION_CARD_REGISTRATION_ID = "cardRegistrationId";
+    private CardRegistration $cardRegistration;
 
-    public function __construct(CardRegistration $cardRegistration, Request $request)
+    public function __construct(
+        string $mangopayUserId,
+        string $currency = "EUR",
+        string $cardType = "CB_VISA_MASTERCARD"
+    )
     {
+        $cardRegistration = CardService::createCardRegistration(
+          mangopayUserId: $mangopayUserId,
+          currency: $currency,
+          cardType: $cardType
+        );
+
+        if(is_null($cardRegistration)) {
+            throw new MangopayError(__("error.credit_card_registration_failed"));
+        }
+
+        request()->session()->put(self::SESSION_CARD_REGISTRATION_ID, $cardRegistration->Id);
         $this->cardRegistration = $cardRegistration;
-        $request->session()->put(self::SESSION_CARD_REGISTRATION_ID, $this->cardRegistration->Id);
     }
 
     public function render()
