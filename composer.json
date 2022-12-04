@@ -1,0 +1,17 @@
+{
+    "name": "d4rk0s/mangopay",
+    "autoload": {
+        "psr-4": {
+            "D4rk0s\\Mangopay\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Grégory COLLIN",
+            "email": "gregory@d4rk0s.net"
+        }
+    ],
+    "require": {
+        "mangopay/php-sdk-v2": "^3.17"
+    }
+}
