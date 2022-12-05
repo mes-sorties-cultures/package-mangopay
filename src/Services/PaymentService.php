@@ -2,7 +2,7 @@
 
 namespace D4rk0s\Mangopay\Services;
 
-use D4rk0s\Mangopay\Events\PaymentFailed;
+use D4rk0s\Mangopay\Events\PaymentFailure;
 use D4rk0s\Mangopay\Events\PaymentSuccessfull;
 use Illuminate\Support\Str;
 use MangoPay\BrowserInfo;
@@ -29,7 +29,6 @@ class PaymentService extends MangopaySDK
         $payIn->AuthorId = $mangopayUserId;
         $payIn->CreditedWalletId = $walletId;
         $payIn->DebitedFunds = $debitedFunds;
-        $payIn->Fees = $fees;
         $payIn->PaymentDetails = new PayInPaymentDetailsCard();
         $payIn->PaymentDetails->CardType = $payerCard->CardType;
         $payIn->PaymentDetails->CardId = $payerCard->Id;
@@ -46,10 +45,13 @@ class PaymentService extends MangopaySDK
         $payIn->PaymentDetails->BrowserInfo->JavascriptEnabled = true;
         $payIn->ExecutionDetails = new PayInExecutionDetailsDirect();
         $payIn->ExecutionDetails->SecureModeReturnURL = route('mangopay-3ds2Callback');
+        if(!is_null($fees)) {
+            $payIn->Fees = $fees;
+        }
 
         $payIn = self::getSDK()->PayIns->Create($payIn);
         if($payIn->Status === PayInStatus::Failed) {
-            return PaymentFailed::dispatch(
+            return PaymentFailure::dispatch(
               $payIn->DebitedFunds->Amount,
               $payIn->Id,
               $mangopayUserId,

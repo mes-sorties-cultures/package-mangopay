@@ -6,7 +6,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class PaymentFailed
+class PaymentFailure
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 

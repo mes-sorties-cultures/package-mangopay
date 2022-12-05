@@ -2,7 +2,6 @@
 
 namespace D4rk0s\Mangopay\Components;
 
-use D4rk0s\Mangopay\Exceptions\MangopayError;
 use D4rk0s\Mangopay\Services\CardService;
 use Illuminate\View\Component;
 use MangoPay\CardRegistration;
@@ -23,10 +22,6 @@ class CreditCardForm extends Component
           currency: $currency,
           cardType: $cardType
         );
-
-        if(is_null($cardRegistration)) {
-            throw new MangopayError(__("error.credit_card_registration_failed"));
-        }
 
         request()->session()->put(self::SESSION_CARD_REGISTRATION_ID, $cardRegistration->Id);
         $this->cardRegistration = $cardRegistration;
