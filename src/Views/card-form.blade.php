@@ -1,4 +1,4 @@
-<form action="{{$cardRegistrationURL}}" method="post">
+<form action="{{$cardRegistrationUrl}}" method="post">
     <input type="hidden"
            name="data"
            value="{{$preRegistrationData}}">

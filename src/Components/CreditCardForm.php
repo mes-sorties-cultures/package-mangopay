@@ -31,6 +31,7 @@ class CreditCardForm extends Component
     {
         return view('mangopay::card-form')
           ->with('preRegistrationData', $this->cardRegistration->PreregistrationData)
+          ->with('cardRegistrationUrl', $this->cardRegistration->CardRegistrationURL)
           ->with('accessKey', $this->cardRegistration->AccessKey)
           ->with('returnUrl', route('mangopay-cardRegistrationCallback'));
     }
