@@ -1,10 +1,10 @@
-<form>
+<form action="{{$cardRegistrationURL}}" method="post">
     <input type="hidden"
            name="data"
-           value="{{$preregistrationData}}">
+           value="{{$preRegistrationData}}">
     <input type="hidden"
            name="accessKeyRef"
-           value="{{$AccessKey}}">
+           value="{{$accessKey}}">
     <input type="hidden"
            name="returnURL"
            value="{{$returnUrl}}">

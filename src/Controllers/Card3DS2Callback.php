@@ -23,14 +23,16 @@ class Card3DS2Callback
         $payIn = PaymentService::retrievePayIn($request->transactionId);
 
         if($payIn->Status === PayInStatus::Succeeded) {
-            return PaymentSuccessfull::dispatch(
+            PaymentSuccessfull::dispatch(
               $payIn->DebitedFunds->Amount,
               $payIn->Id,
               $payIn->AuthorId
             );
+
+            return;
         }
 
-        return PaymentFailure::dispatch(
+        PaymentFailure::dispatch(
           $payIn->DebitedFunds->Amount,
           $payIn->Id,
           $payIn->AuthorId,

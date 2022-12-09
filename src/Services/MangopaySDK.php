@@ -12,11 +12,9 @@ abstract class MangopaySDK
     protected static function getSDK()
     {
         $api = new MangoPayApi();
-        $config = new Configuration();
-        $config->ClientId = env('MANGOPAY_CLIENT_ID');
-        $config->ClientPassword = env('MANGOPAY_CLIENT_PASSWORD');
-        $config->TemporaryFolder = env('MANGOPAY_TEMP_DIR');
-        $api->setConfig($config);
+        $api->Config->ClientId = env('MANGOPAY_CLIENT_ID');
+        $api->Config->ClientPassword = env('MANGOPAY_CLIENT_PASSWORD');
+        $api->Config->TemporaryFolder = env('MANGOPAY_TEMP_DIR');
 
         return $api;
     }
