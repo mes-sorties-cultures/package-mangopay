@@ -50,6 +50,9 @@ class CardRegistrationCallback
 
         CardRegistrationSuccessfull::dispatch($cardRegistration);
 
-        return redirect()->route(config('mangopay.paymentRoute'), ['locale'=>App()->getLocale()]);
+        return redirect()->route(config('mangopay.paymentRoute'), [
+            'locale'=>App()->getLocale(),
+            'cardId' => $cardRegistration->CardId
+        ]);
     }
 }
