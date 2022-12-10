@@ -4,6 +4,7 @@ namespace D4rk0s\Mangopay\Services;
 
 use MangoPay\Card;
 use MangoPay\CardRegistration;
+use MangoPay\Pagination;
 
 class CardService extends MangopaySDK
 {
@@ -30,14 +31,24 @@ class CardService extends MangopaySDK
         if(is_null($cardRegistration)) {
             throw new \Exception("Unable to retrieve the CardRegistration object with id : ".$cardRegistrationId);
         }
-        $cardRegistration->RegistrationData = $registrationData;
+        $cardRegistration->RegistrationData = "data=".$registrationData;
 
         return self::getSDK()->CardRegistrations->Update(cardRegistration: $cardRegistration);
     }
 
     public static function getUserCard(string $mangopayUserId, ?string $userCardId = null) : Card
     {
-        $cards = self::getSDK()->Users->GetCards($mangopayUserId);
+        if($userCardId) {
+            $card = self::getSDK()->Cards->Get($userCardId);
+            if($card === null) {
+                throw new \Exception("No card with id (".$userCardId.") found for this user (".$mangopayUserId.")");
+            }
+
+            return $card;
+        }
+
+        $pagination = new Pagination(1, 100);
+        $cards = self::getSDK()->Users->GetCards($mangopayUserId, $pagination);
         $activeCards = array_filter($cards, function(Card $card) { return $card->Active === true;});
         $numActiveCards = count($activeCards);
 
@@ -45,19 +56,10 @@ class CardService extends MangopaySDK
             throw new \Exception("No active cards found for this user (".$mangopayUserId.")");
         }
 
-        if(is_null($userCardId)) {
-            if($numActiveCards === 1)  {
-                return current($activeCards);
-            }
-            throw new \Exception("Multiple active cards found and no userCardId specified.");
+        if($numActiveCards === 1)  {
+            return current($activeCards);
         }
 
-        foreach($activeCards as $card) {
-            if($card->Id === $userCardId) {
-                return $card;
-            }
-        }
-
-        throw new \Exception("No card with id (".$userCardId.") found for this user (".$mangopayUserId.")");
+        throw new \Exception("Multiple active cards found and no userCardId specified.");
     }
 }

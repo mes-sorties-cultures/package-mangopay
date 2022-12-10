@@ -42,7 +42,7 @@
         </label>
         <div class="col-xs-12 col-sm-5">
             <input type="text"
-                   name="cardCvx"
+                   name="cardExpirationDate"
                    class="cc-exp"
                    placeholder="•• / ••"
                    required>

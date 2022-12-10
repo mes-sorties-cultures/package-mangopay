@@ -45,7 +45,11 @@ class PaymentService extends MangopaySDK
         $payIn->PaymentDetails->BrowserInfo->JavascriptEnabled = true;
         $payIn->ExecutionDetails = new PayInExecutionDetailsDirect();
         $payIn->ExecutionDetails->SecureModeReturnURL = route('mangopay-3ds2Callback');
-        if(!is_null($fees)) {
+        if(is_null($fees)) {
+            $payIn->Fees = new Money();
+            $payIn->Fees->Currency="EUR";
+            $payIn->Fees->Amount = 0;
+        } else {
             $payIn->Fees = $fees;
         }
 
