@@ -18,6 +18,9 @@ class MangopayProvider extends ServiceProvider
         $this->publishes([
                            __DIR__.'/../Lang' => $this->app->langPath('vendor/mangopay'),
                          ]);
+        $this->publishes([
+            __DIR__.'/../Config/mangopay.php' => config_path('mangopay.php'),
+        ]);
         Blade::componentNamespace('D4rk0s\\Mangopay\\Components', 'mangopay');
     }
 }

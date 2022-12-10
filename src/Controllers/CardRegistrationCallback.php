@@ -18,6 +18,8 @@ class CardRegistrationCallback
             abort(403);
         }
 
+        // @todo: Check si la configuration du package est ok ?
+
         if($request->errorCode) {
             $request->session()->forget(CreditCardForm::SESSION_CARD_REGISTRATION_ID);
 
@@ -27,7 +29,8 @@ class CardRegistrationCallback
               __("mangopay.error.unknown", ['errorCode' => $request->errorCode]);
 
             CardRegistrationFailure::dispatch($request->errorCode, $errorMessage);
-            return;
+
+            return redirect(config('mangopay.failure.route'), ['locale'=>App()->getLocale()])->withErrors($errorMessage);
         }
 
         if(is_null($request->data)) {
@@ -37,8 +40,15 @@ class CardRegistrationCallback
         $cardRegistrationId = $request->session()->get(CreditCardForm::SESSION_CARD_REGISTRATION_ID);
         $cardRegistration = CardService::updateCardRegistration($cardRegistrationId, $request->data);
 
-        $cardRegistration->Status !== CardRegistrationStatus::Validated || !isset($cardRegistration->CardId) ?
-            CardRegistrationFailure::dispatch($cardRegistration->ResultCode, $cardRegistration->ResultMessage) :
-            CardRegistrationSuccessfull::dispatch($cardRegistration);
+        if($cardRegistration->Status !== CardRegistrationStatus::Validated || !isset($cardRegistration->CardId)) {
+            CardRegistrationFailure::dispatch($cardRegistration->ResultCode, $cardRegistration->ResultMessage);
+
+            return redirect(config('mangopay.failure.route'), ['locale'=>App()->getLocale()])
+                ->withErrors($cardRegistration->ResultMessage);
+        }
+
+        CardRegistrationSuccessfull::dispatch($cardRegistration);
+
+        return redirect(config('mangopay.success.route'), ['locale'=>App()->getLocale()]);
     }
 }
