@@ -30,7 +30,8 @@ class CardRegistrationCallback
 
             CardRegistrationFailure::dispatch($request->errorCode, $errorMessage);
 
-            return redirect(config('mangopay.failure.route'), ['locale'=>App()->getLocale()])->withErrors($errorMessage);
+            return redirect()->route(config('mangopay.failureRoute'), ['locale'=>App()->getLocale()])
+                ->withErrors($errorMessage);
         }
 
         if(is_null($request->data)) {
@@ -43,12 +44,12 @@ class CardRegistrationCallback
         if($cardRegistration->Status !== CardRegistrationStatus::Validated || !isset($cardRegistration->CardId)) {
             CardRegistrationFailure::dispatch($cardRegistration->ResultCode, $cardRegistration->ResultMessage);
 
-            return redirect(config('mangopay.failure.route'), ['locale'=>App()->getLocale()])
+            return redirect()->route(config('mangopay.failureRoute'), ['locale'=>App()->getLocale()])
                 ->withErrors($cardRegistration->ResultMessage);
         }
 
         CardRegistrationSuccessfull::dispatch($cardRegistration);
 
-        return redirect(config('mangopay.success.route'), ['locale'=>App()->getLocale()]);
+        return redirect()->route(config('mangopay.successRoute'), ['locale'=>App()->getLocale()]);
     }
 }
