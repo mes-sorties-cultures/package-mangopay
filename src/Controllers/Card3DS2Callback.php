@@ -29,7 +29,7 @@ class Card3DS2Callback
               $payIn->AuthorId
             );
 
-            return;
+            return redirect()->route(config('mangopay.paymentSuccessRoute'));
         }
 
         PaymentFailure::dispatch(
@@ -38,6 +38,9 @@ class Card3DS2Callback
           $payIn->AuthorId,
           $payIn->ResultCode
         );
+
+        return redirect()->route(config('mangopay.paymentFailureRoute'))
+            ->withErrors($payIn->ResultCode);
     }
 
 }

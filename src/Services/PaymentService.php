@@ -55,24 +55,31 @@ class PaymentService extends MangopaySDK
 
         $payIn = self::getSDK()->PayIns->Create($payIn);
         if($payIn->Status === PayInStatus::Failed) {
-            return PaymentFailure::dispatch(
+            PaymentFailure::dispatch(
               $payIn->DebitedFunds->Amount,
               $payIn->Id,
               $mangopayUserId,
               $payIn->ResultCode
             );
+
+            return redirect()->route(config('mangopay.paymentFailureRoute'))
+                ->withErrors($payIn->ResultCode);
+
         }
 
         if ($payIn->ExecutionDetails->SecureModeNeeded === true) {
             request()->session()->put(self::TRANSACTION_ID_IN_SESSION, $payIn->Id);
-            return redirect()->away($payIn->ExecutionDetails->SecureModeRedirectURL);
+
+            return redirect($payIn->ExecutionDetails->SecureModeRedirectURL);
         }
 
-        return PaymentSuccessfull::dispatch(
-          $payIn->DebitedFunds->Amount,
-          $payIn->Id,
-          $mangopayUserId
+        PaymentSuccessfull::dispatch(
+            $payIn->DebitedFunds->Amount,
+            $payIn->Id,
+            $mangopayUserId
         );
+
+        return redirect()->route(config('mangopay.paymentSuccessRoute'));
     }
 
     public static function retrievePayIn(string $payInId) : ?PayIn

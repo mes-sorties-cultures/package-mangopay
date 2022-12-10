@@ -1,5 +1,7 @@
 <?php
 return [
-    'successRoute' => '',
-    'failureRoute' => ''
+    'cardInformationRoute' => '',
+    'paymentRoute' => '',
+    'paymentSuccessRoute' => '',
+    'paymentFailureRoute' => ''
 ];
