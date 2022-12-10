@@ -62,7 +62,7 @@ class PaymentService extends MangopaySDK
               $payIn->ResultCode
             );
 
-            return redirect()->route(config('mangopay.paymentFailureRoute'))
+            return redirect()->route(config('mangopay.paymentFailureRoute'), ['locale' => App()->getLocale()])
                 ->withErrors($payIn->ResultCode);
 
         }
@@ -79,7 +79,7 @@ class PaymentService extends MangopaySDK
             $mangopayUserId
         );
 
-        return redirect()->route(config('mangopay.paymentSuccessRoute'));
+        return redirect()->route(config('mangopay.paymentSuccessRoute'), ['locale' => App()->getLocale()]);
     }
 
     public static function retrievePayIn(string $payInId) : ?PayIn
