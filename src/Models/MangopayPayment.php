@@ -21,9 +21,9 @@ class MangopayPayment
         return $this;
     }
 
-    public function setCardRegistration(CardRegistration $cardRegistrationId): self
+    public function setCardRegistration(CardRegistration $cardRegistration): self
     {
-        $this->cardRegistrationId = $cardRegistrationId;
+        $this->cardRegistration = $cardRegistration;
 
         return $this;
     }

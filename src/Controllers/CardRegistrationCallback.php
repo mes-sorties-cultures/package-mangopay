@@ -56,7 +56,7 @@ class CardRegistrationCallback
         $debitedFunds->Currency = $mangopayPayment->getCurrency();
 
         $wallet = WalletService::getUserWallet($mangopayPayment->getUserId());
-        $card = CardService::getUserCard($mangopayPayment->getUserId(), $request->cardId);
+        $card = CardService::getUserCard($mangopayPayment->getUserId(), $cardRegistration->CardId);
 
         return PaymentService::make(
             mangopayUserId: $mangopayPayment->getUserId(),
