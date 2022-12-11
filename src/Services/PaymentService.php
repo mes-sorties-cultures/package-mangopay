@@ -4,6 +4,7 @@ namespace D4rk0s\Mangopay\Services;
 
 use D4rk0s\Mangopay\Events\PaymentFailure;
 use D4rk0s\Mangopay\Events\PaymentSuccessfull;
+use D4rk0s\Mangopay\Models\MangopayPayment;
 use Illuminate\Support\Str;
 use MangoPay\BrowserInfo;
 use MangoPay\Card;
@@ -68,7 +69,10 @@ class PaymentService extends MangopaySDK
         }
 
         if ($payIn->ExecutionDetails->SecureModeNeeded === true) {
-            request()->session()->put(self::TRANSACTION_ID_IN_SESSION, $payIn->Id);
+            $mangopayPayment = MangopayPayment::load();
+            $mangopayPayment
+                ->setTransactionId($payIn->Id)
+                ->save();
 
             return redirect($payIn->ExecutionDetails->SecureModeRedirectURL);
         }
@@ -82,8 +86,13 @@ class PaymentService extends MangopaySDK
         return redirect()->route(config('mangopay.paymentSuccessRoute'), ['locale' => App()->getLocale()]);
     }
 
-    public static function retrievePayIn(string $payInId) : ?PayIn
+    public static function retrievePayIn(string $payInId) : PayIn
     {
-        return self::getSDK()->PayIns->Get($payInId);
+        $payIn = self::getSDK()->PayIns->Get($payInId);
+        if(is_null($payIn)) {
+            abort(403);
+        }
+
+        return $payIn;
     }
 }

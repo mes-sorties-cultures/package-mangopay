@@ -23,14 +23,10 @@ class CardService extends MangopaySDK
     }
 
     public static function updateCardRegistration(
-      string $cardRegistrationId,
+      CardRegistration $cardRegistration,
       string $registrationData
     ) : CardRegistration
     {
-        $cardRegistration = self::getSDK()->CardRegistrations->Get(cardRegistrationId: $cardRegistrationId);
-        if(is_null($cardRegistration)) {
-            throw new \Exception("Unable to retrieve the CardRegistration object with id : ".$cardRegistrationId);
-        }
         $cardRegistration->RegistrationData = "data=".$registrationData;
 
         return self::getSDK()->CardRegistrations->Update(cardRegistration: $cardRegistration);

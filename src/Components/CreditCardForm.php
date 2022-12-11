@@ -2,28 +2,39 @@
 
 namespace D4rk0s\Mangopay\Components;
 
+use D4rk0s\Mangopay\Models\MangopayPayment;
 use D4rk0s\Mangopay\Services\CardService;
 use Illuminate\View\Component;
 use MangoPay\CardRegistration;
 
 class CreditCardForm extends Component
 {
-    public const SESSION_CARD_REGISTRATION_ID = "cardRegistrationId";
     private CardRegistration $cardRegistration;
 
     public function __construct(
         string $mangopayUserId,
+        float $amount,
         string $currency = "EUR",
         string $cardType = "CB_VISA_MASTERCARD"
     )
     {
+        if($amount <= 0) {
+            throw new \Exception("Invalid amount to pay.");
+        }
+
         $cardRegistration = CardService::createCardRegistration(
           mangopayUserId: $mangopayUserId,
           currency: $currency,
           cardType: $cardType
         );
 
-        request()->session()->put(self::SESSION_CARD_REGISTRATION_ID, $cardRegistration->Id);
+        $mangopayOrder = new MangopayPayment();
+        $mangopayOrder
+            ->setCardRegistration($cardRegistration)
+            ->setUserId($mangopayUserId)
+            ->setAmount($amount)
+            ->save();
+
         $this->cardRegistration = $cardRegistration;
     }
 

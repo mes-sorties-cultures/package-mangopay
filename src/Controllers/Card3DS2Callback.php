@@ -4,6 +4,7 @@ namespace D4rk0s\Mangopay\Controllers;
 
 use D4rk0s\Mangopay\Events\PaymentFailure;
 use D4rk0s\Mangopay\Events\PaymentSuccessfull;
+use D4rk0s\Mangopay\Models\MangopayPayment;
 use D4rk0s\Mangopay\Services\PaymentService;
 use Illuminate\Http\Request;
 use MangoPay\PayInStatus;
@@ -12,10 +13,9 @@ class Card3DS2Callback
 {
     public function __invoke(Request $request)
     {
-        $transactionIdInSession = $request->session()->get(PaymentService::TRANSACTION_ID_IN_SESSION);
-        $request->session()->forget(PaymentService::TRANSACTION_ID_IN_SESSION);
+        $mangopayPayment = MangopayPayment::load();
 
-        if(is_null($transactionIdInSession) || $transactionIdInSession !== $request->transactionId) {
+        if($mangopayPayment->getTransactionId() !== $request->transactionId) {
             abort(403);
         }
 
