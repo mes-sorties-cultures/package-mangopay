@@ -68,12 +68,12 @@ class PaymentService extends MangopaySDK
 
         }
 
+        $mangopayPayment = MangopayPayment::load();
+        $mangopayPayment
+            ->setTransactionId($payIn->Id)
+            ->save();
+        
         if ($payIn->ExecutionDetails->SecureModeNeeded === true) {
-            $mangopayPayment = MangopayPayment::load();
-            $mangopayPayment
-                ->setTransactionId($payIn->Id)
-                ->save();
-
             return redirect($payIn->ExecutionDetails->SecureModeRedirectURL);
         }
 

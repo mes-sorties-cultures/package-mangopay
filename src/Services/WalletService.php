@@ -2,6 +2,8 @@
 
 namespace D4rk0s\Mangopay\Services;
 
+use MangoPay\Money;
+use MangoPay\Transfer;
 use MangoPay\User;
 use MangoPay\Wallet;
 
@@ -19,6 +21,15 @@ class WalletService extends MangopaySDK
 
     public static function getUserWallet(string $mangopayUserId, ?string $userWalletId = null) : Wallet
     {
+        if($userWalletId) {
+            $wallet = self::getSDK()->Wallets->Get($userWalletId);
+            if($wallet === null) {
+                throw new \Exception("No wallet with id (".$userWalletId.") found for this user (".$mangopayUserId.")");
+            }
+
+            return $wallet;
+        }
+
         $wallets = self::getSDK()->Users->GetWallets($mangopayUserId);
         $numWallets = count($wallets);
 
@@ -26,19 +37,38 @@ class WalletService extends MangopaySDK
             throw new \Exception("No wallets found for this user (".$mangopayUserId.")");
         }
 
-        if(is_null($userWalletId)) {
-            if($numWallets === 1)  {
-                return current($wallets);
-            }
-            throw new \Exception("Multiple wallets found and no userWalletId specified.");
+        if($numWallets === 1)  {
+            return current($wallets);
         }
 
-        foreach($wallets as $wallet) {
-            if($wallet->Id === $userWalletId) {
-                return $wallet;
-            }
-        }
+        throw new \Exception("Multiple wallets found and no userWalletId specified.");
+    }
 
-        throw new \Exception("No wallets with id (".$userWalletId.") found for this user (".$mangopayUserId.")");
+    public static function transfertMoneyBetweenWallets(
+        string $mangopayUserId,
+        string $walletIdFrom,
+        string $walletIdTo,
+        string $amount,
+        int $feeAmount = 0,
+        string $currency = "EUR",
+        string $metadata = ""
+    ) {
+        $debitedFunds = new Money();
+        $debitedFunds->Currency = $currency;
+        $debitedFunds->Amount = $amount * 100;
+
+        $fees = new Money();
+        $fees->Currency = $currency;
+        $fees->Amount = $feeAmount * 100;
+
+        $transfert = new Transfer();
+        $transfert->AuthorId = $mangopayUserId;
+        $transfert->DebitedFunds = $debitedFunds;
+        $transfert->Fees = $fees;
+        $transfert->CreditedWalletId = $walletIdTo;
+        $transfert->DebitedWalletId = $walletIdFrom;
+        $transfert->Tag = $metadata;
+
+        return self::getSDK()->Transfers->Create($transfert);
     }
 }
