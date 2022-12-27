@@ -22,7 +22,7 @@ class CardRegistrationCallback
         if($request->errorCode) {
             $mangopayErrorEnum = MangopayErrorEnum::tryFrom($request->errorCode);
             if(is_null($mangopayErrorEnum)) {
-                $errorMessage = __("mangopay.error.unknown", ['errorCode' => $request->errorCode]);
+                $errorMessage = __("mangopay::messages.error.unknown", ['errorCode' => $request->errorCode]);
             } else {
                 $errorMessage = $mangopayErrorEnum->getErrorMessage();
             }
@@ -30,7 +30,7 @@ class CardRegistrationCallback
             CardRegistrationFailure::dispatch($request->errorCode, $errorMessage);
             MangopayPayment::remove();
 
-            return redirect()->route(config('mangopay.cardInformationRoute'), ['locale'=>App()->getLocale()])
+            return redirect()->route(config('mangopay::messages.cardInformationRoute'), ['locale'=>App()->getLocale()])
                 ->withErrors($errorMessage);
         }
 
@@ -44,7 +44,7 @@ class CardRegistrationCallback
             CardRegistrationFailure::dispatch($cardRegistration->ResultCode, $cardRegistration->ResultMessage);
             MangopayPayment::remove();
 
-            return redirect()->route(config('mangopay.cardInformationRoute'), ['locale'=>App()->getLocale()])
+            return redirect()->route(config('mangopay::messages.cardInformationRoute'), ['locale'=>App()->getLocale()])
                 ->withErrors($cardRegistration->ResultMessage);
         }
 

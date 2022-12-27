@@ -16,13 +16,13 @@ enum MangopayErrorEnum : string
     {
         return match($this)
         {
-            self::INVALID_CARD_NUMBER => __('mangopay.error.invalid_card_number'),
-            self::INVALID_DATE => __('mangopay.error.invalid_date'),
-            self::INVALID_CCV_NUMBER => __('mangopay.error.invalid_cvv'),
-            self::TOKENISATION_SERVER_ERROR => __('mangopay.error.tokenisation_server_failure'),
-            self::INACTIVE_CARD => __('mangopay.error.inactive_card'),
-            self::EXPIRED_CARD => __('mangopay.error.expired_card'),
-            self::TIMEOUT => __('mangopay.error.timeout')
+            self::INVALID_CARD_NUMBER => __('mangopay::messages.error.invalid_card_number'),
+            self::INVALID_DATE => __('mangopay::messages.error.invalid_date'),
+            self::INVALID_CCV_NUMBER => __('mangopay::messages.error.invalid_cvv'),
+            self::TOKENISATION_SERVER_ERROR => __('mangopay::messages.error.tokenisation_server_failure'),
+            self::INACTIVE_CARD => __('mangopay::messages.error.inactive_card'),
+            self::EXPIRED_CARD => __('mangopay::messages.error.expired_card'),
+            self::TIMEOUT => __('mangopay::messages.error.timeout')
         };
     }
 }
