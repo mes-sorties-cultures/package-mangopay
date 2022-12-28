@@ -4,7 +4,7 @@ namespace D4rk0s\Mangopay\Controllers;
 
 use D4rk0s\Mangopay\Events\PaymentFailure;
 use D4rk0s\Mangopay\Events\PaymentSuccessfull;
-use D4rk0s\Mangopay\Models\MangopayPayment;
+use D4rk0s\Mangopay\Models\MangopayPaymentModel;
 use D4rk0s\Mangopay\Services\PaymentService;
 use Illuminate\Http\Request;
 use MangoPay\PayInStatus;
@@ -13,7 +13,7 @@ class Card3DS2Callback
 {
     public function __invoke(Request $request)
     {
-        $mangopayPayment = MangopayPayment::load();
+        $mangopayPayment = MangopayPaymentModel::load();
 
         if($mangopayPayment->getTransactionId() !== $request->transactionId) {
             abort(403);
@@ -29,7 +29,7 @@ class Card3DS2Callback
               $payIn->AuthorId
             );
 
-            return redirect()->route(config('mangopay.paymentSuccessRoute'), ['locale' => App()->getLocale()]);
+            return redirect()->route($mangopayPayment->getSuccessPaymentRoute(), ['locale' => App()->getLocale()]);
         }
 
         PaymentFailure::dispatch(
@@ -39,7 +39,7 @@ class Card3DS2Callback
           $payIn->ResultCode
         );
 
-        return redirect()->route(config('mangopay.paymentFailureRoute'), ['locale' => App()->getLocale()])
+        return redirect()->route($mangopayPayment->getFailurePaymentRoute(), ['locale' => App()->getLocale()])
             ->withErrors($payIn->ResultCode);
     }
 

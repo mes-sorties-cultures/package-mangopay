@@ -5,7 +5,7 @@ namespace D4rk0s\Mangopay\Controllers;
 use D4rk0s\Mangopay\Events\CardRegistrationFailure;
 use D4rk0s\Mangopay\Events\CardRegistrationSuccessfull;
 use D4rk0s\Mangopay\Models\MangopayErrorEnum;
-use D4rk0s\Mangopay\Models\MangopayPayment;
+use D4rk0s\Mangopay\Models\MangopayPaymentModel;
 use D4rk0s\Mangopay\Services\CardService;
 use D4rk0s\Mangopay\Services\PaymentService;
 use D4rk0s\Mangopay\Services\WalletService;
@@ -17,7 +17,7 @@ class CardRegistrationCallback
 {
     public function __invoke(Request $request)
     {
-        $mangopayPayment = MangopayPayment::load();
+        $mangopayPayment = MangopayPaymentModel::load();
 
         if($request->errorCode) {
             $mangopayErrorEnum = MangopayErrorEnum::tryFrom($request->errorCode);
@@ -28,9 +28,9 @@ class CardRegistrationCallback
             }
 
             CardRegistrationFailure::dispatch($request->errorCode, $errorMessage);
-            MangopayPayment::remove();
+            MangopayPaymentModel::remove();
 
-            return redirect()->route(config('mangopay::messages.cardInformationRoute'), ['locale'=>App()->getLocale()])
+            return redirect()->route($mangopayPayment->getCardDetailsRoute(), ['locale'=>App()->getLocale()])
                 ->withErrors($errorMessage);
         }
 
@@ -42,9 +42,9 @@ class CardRegistrationCallback
 
         if($cardRegistration->Status !== CardRegistrationStatus::Validated || !isset($cardRegistration->CardId)) {
             CardRegistrationFailure::dispatch($cardRegistration->ResultCode, $cardRegistration->ResultMessage);
-            MangopayPayment::remove();
+            MangopayPaymentModel::remove();
 
-            return redirect()->route(config('mangopay::messages.cardInformationRoute'), ['locale'=>App()->getLocale()])
+            return redirect()->route($mangopayPayment->getCardDetailsRoute(), ['locale'=>App()->getLocale()])
                 ->withErrors($cardRegistration->ResultMessage);
         }
 

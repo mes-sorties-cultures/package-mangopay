@@ -4,7 +4,7 @@ namespace D4rk0s\Mangopay\Services;
 
 use D4rk0s\Mangopay\Events\PaymentFailure;
 use D4rk0s\Mangopay\Events\PaymentSuccessfull;
-use D4rk0s\Mangopay\Models\MangopayPayment;
+use D4rk0s\Mangopay\Models\MangopayPaymentModel;
 use Illuminate\Support\Str;
 use MangoPay\BrowserInfo;
 use MangoPay\Card;
@@ -16,8 +16,6 @@ use MangoPay\PayInStatus;
 
 class PaymentService extends MangopaySDK
 {
-    public const TRANSACTION_ID_IN_SESSION = 'transactionId';
-
     public static function make(
       string $mangopayUserId,
       string $walletId,
@@ -54,6 +52,8 @@ class PaymentService extends MangopaySDK
             $payIn->Fees = $fees;
         }
 
+        $mangopayPayment = MangopayPaymentModel::load();
+
         $payIn = self::getSDK()->PayIns->Create($payIn);
         if($payIn->Status === PayInStatus::Failed) {
             PaymentFailure::dispatch(
@@ -63,12 +63,12 @@ class PaymentService extends MangopaySDK
               $payIn->ResultCode
             );
 
-            return redirect()->route(config('mangopay.paymentFailureRoute'), ['locale' => App()->getLocale()])
+            return redirect()->route($mangopayPayment->getFailurePaymentRoute(), ['locale' => App()->getLocale()])
                 ->withErrors($payIn->ResultCode);
 
         }
 
-        $mangopayPayment = MangopayPayment::load();
+        $mangopayPayment = MangopayPaymentModel::load();
         $mangopayPayment
             ->setTransactionId($payIn->Id)
             ->save();
@@ -83,7 +83,7 @@ class PaymentService extends MangopaySDK
             $mangopayUserId
         );
 
-        return redirect()->route(config('mangopay.paymentSuccessRoute'), ['locale' => App()->getLocale()]);
+        return redirect()->route($mangopayPayment->getFailurePaymentRoute(), ['locale' => App()->getLocale()]);
     }
 
     public static function retrievePayIn(string $payInId) : PayIn

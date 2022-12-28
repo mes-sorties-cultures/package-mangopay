@@ -1,11 +1,11 @@
 <?php
 
 return [
-  "form.creditCardNumber" => "Credit card number :",
+  "form.creditCardNumber" => "Numéro de carte de crédit :",
   "form.cvv" => "CVV :",
-  "form.expiry_date" => "Expiry date",
-  "form.cgu" => "I hereby recognized to accept Mangopay CGU",
-  "form.submit" => "Pay",
+  "form.expiry_date" => "Date d'expiration",
+  "form.cgu" => "J'ai pris connaissance et accepte les CGU de Mangopay",
+  "form.submit" => "Valider mon paiement",
 
   "error.invalid_card_number" => "Votre numéro de carte est invalide",
   "error.invalid_date" => "La date d\\'expiration de la carte est invalide : MMYY",

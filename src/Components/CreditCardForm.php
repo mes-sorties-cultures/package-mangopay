@@ -2,8 +2,10 @@
 
 namespace D4rk0s\Mangopay\Components;
 
-use D4rk0s\Mangopay\Models\MangopayPayment;
+use D4rk0s\Mangopay\Models\MangopayPaymentModel;
 use D4rk0s\Mangopay\Services\CardService;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\App;
 use Illuminate\View\Component;
 use MangoPay\CardRegistration;
 
@@ -14,6 +16,8 @@ class CreditCardForm extends Component
     public function __construct(
         string $mangopayUserId,
         float $amount,
+        string $successPaymentRoute,
+        string $failurePaymentRoute,
         string $currency = "EUR",
         string $cardType = "CB_VISA_MASTERCARD"
     )
@@ -28,10 +32,13 @@ class CreditCardForm extends Component
           cardType: $cardType
         );
 
-        $mangopayOrder = new MangopayPayment();
-        $mangopayOrder
+        $mangopayPaymentModel = new MangopayPaymentModel();
+        $mangopayPaymentModel
             ->setCardRegistration($cardRegistration)
             ->setUserId($mangopayUserId)
+            ->setFailurePaymentRoute($failurePaymentRoute)
+            ->setSuccessPaymentRoute($successPaymentRoute)
+            ->setCardRegistration(Route::current()->getName())
             ->setAmount($amount)
             ->save();
 

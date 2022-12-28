@@ -4,15 +4,19 @@ namespace D4rk0s\Mangopay\Models;
 
 use MangoPay\CardRegistration;
 
-class MangopayPayment
+class MangopayPaymentModel
 {
     public const SESSION_MANGOPAY_ORDER = "mangopay_order";
 
     private string $userId;
     private CardRegistration $cardRegistration;
+    private string $successPaymentRoute;
+    private string $failurePaymentRoute;
+    private string $cardDetailsRoute;
     private int $amount;
     private string $currency = "EUR";
     private string $transactionId;
+
 
     public function setUserId(string $userId): self
     {
@@ -49,6 +53,27 @@ class MangopayPayment
         return $this;
     }
 
+    public function setSuccessPaymentRoute(string $successPaymentRoute): self
+    {
+        $this->successPaymentRoute = $successPaymentRoute;
+
+        return $this;
+    }
+
+    public function setFailurePaymentRoute(string $failurePaymentRoute): self
+    {
+        $this->failurePaymentRoute = $failurePaymentRoute;
+
+        return $this;
+    }
+
+    public function setCardDetailsRoute(string $cardDetailsRoute): self
+    {
+        $this->cardDetailsRoute = $cardDetailsRoute;
+
+        return $this;
+    }
+
     public function getTransactionId(): string
     {
         return $this->transactionId;
@@ -74,7 +99,22 @@ class MangopayPayment
         return $this->currency;
     }
 
-    public static function load() : MangopayPayment
+    public function getSuccessPaymentRoute(): string
+    {
+        return $this->successPaymentRoute;
+    }
+
+    public function getFailurePaymentRoute(): string
+    {
+        return $this->failurePaymentRoute;
+    }
+
+    public function getCardDetailsRoute(): string
+    {
+        return $this->cardDetailsRoute;
+    }
+
+    public static function load() : MangopayPaymentModel
     {
         if(!session()->has(self::SESSION_MANGOPAY_ORDER)) {
             throw new \Exception("Mangopay Order not found");
