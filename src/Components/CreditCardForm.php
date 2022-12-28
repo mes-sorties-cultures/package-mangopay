@@ -4,8 +4,7 @@ namespace D4rk0s\Mangopay\Components;
 
 use D4rk0s\Mangopay\Models\MangopayPaymentModel;
 use D4rk0s\Mangopay\Services\CardService;
-use Illuminate\Routing\Route;
-use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\Component;
 use MangoPay\CardRegistration;
 
@@ -38,7 +37,7 @@ class CreditCardForm extends Component
             ->setUserId($mangopayUserId)
             ->setFailurePaymentRoute($failurePaymentRoute)
             ->setSuccessPaymentRoute($successPaymentRoute)
-            ->setCardRegistration(Route::current()->getName())
+            ->setCardDetailsRoute(Route::current()->getName())
             ->setAmount($amount)
             ->save();
 
